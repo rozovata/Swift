@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Список задач</h1>
+<ul id="tasks">
+</ul>
+
+<div>
+    <input id="name" placeholder="имя задачи">
+    <textarea id="description" placeholder="описание задачи"></textarea>
+    <button id="save">Создать</button>
+</div>
+
+<script>
+    async function create_task() {
+        const input = document.getElementById("name")
+        const name = input.value
+
+        const textarea = document.getElementById("description")
+        const description = textarea.value
+
+        await fetch("/api/add_task", {
+		    method: "POST",
+		    headers: {'Content-Type': 'application/json'},  // так как мы шлём json, нужно явно это показать
+
+            body: JSON.stringify({
+                name: name,
+                description: description
+            }),
+        })
+
+        location.reload();
+    }
+
+    async function get_tasks() {
+        const response = await fetch("api/get_tasks")
+        const tasks = await response.json()
+        const ul = document.getElementById("tasks")
+        tasks.forEach((task) => {
+            const li = document.createElement("li")
+            li.innerHTML = task.name
+            ul.appendChild(li)
+        })
+    }
+    get_tasks()
+    document.getElementById("save").onclick = create_task
+</script>
+</body>
+</html>
