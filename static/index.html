@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <p>Авторизация</p>
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxlFCXTU1vPdkR0G7B_Ur8VRWUSg73w8cT9A&s" alt="Котик" width="200">
+<div>
+
+    <input id="user_name" placeholder="имя пользователя">
+    <input id="user_pass" placeholder="пароль">\
+     <button id="save">авторизоваться</button>
+</div>
+    <script>
+    async function create_user() {
+        const input1 = document.getElementById("user_name")
+        const user_name = input1.value
+        const input2 = document.getElementById("user_pass")
+        const user_pass = input2.value
+        const input3 = document.getElementById("user_pass")
+        await fetch("/api/add_user", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},  // так как мы шлём json, нужно явно это показать
+            body: JSON.stringify({
+                name: user_name,
+                passw: user_pass,
+            }),
+        })
+
+        location.reload();
+    }
+
+/*    async function get_user() {
+        const response = await fetch("api/get_user")
+        const users = await response.json()
+        const ul = document.getElementById("users")
+        users.forEach((user) => {
+            const li = document.createElement("li")
+            li.innerHTML =user["to"] + " " + user["fromm"]
+            ul.appendChild(li)
+        })
+    }
+    get_transfer()*/
+
+    document.getElementById("save").onclick = create_user
+    </script>
+</head>
+<body>
+</body>
+</html>
