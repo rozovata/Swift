@@ -2,41 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Swift | Добро пожаловать</title>
 </head>
 <body>
-<h1>Список задач</h1>
-<ul id="tasks">
-</ul>
 
-<div>
-    <input id="name" placeholder="имя задачи">
-    <textarea id="description" placeholder="описание задачи"></textarea>
-    <button id="save">Создать</button>
-</div>
+<h1>Вход в аккаунт</h1>
+
+<p><input id="userName" placeholder="Имя пользователя"><br></p>
+<p><input id="pass" placeholder="Пароль"><br></p>
+<button id="logBtn">Войти</button> <br><br>
+<button id="newUsBtn">Создать аккаунт</button>
+
+
+
+
 
 <script>
-    async function create_task() {
-        const input = document.getElementById("name")
-        const name = input.value
+    async function add_user() {
+        const input1 = document.getElementById("userName")
+        const userName = input1.value
 
-        const textarea = document.getElementById("description")
-        const description = textarea.value
+        const input2 = document.getElementById("pass")
+        const pass = input2.value
 
-        await fetch("/api/add_task", {
+        await fetch("/api/add_user", {
 		    method: "POST",
 		    headers: {'Content-Type': 'application/json'},  // так как мы шлём json, нужно явно это показать
 
             body: JSON.stringify({
-                name: name,
-                description: description
+                userName: userName,
+                pass: pass
             }),
         })
 
         location.reload();
     }
 
-    async function get_tasks() {
+    async function logIn() {
         const response = await fetch("api/get_tasks")
         const tasks = await response.json()
         const ul = document.getElementById("tasks")
