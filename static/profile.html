@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+    <p>Profile</p>
+    <div>
+
+    <input id ="rename" type="text" value="tanya">
+    <input id="repass" type="text" value="111">\
+     <button id="change">change</button>
+</div>
+    <script>
+    async function re_user() {
+        const input1 = document.getElementById("rename")
+        const user_name = input1.value
+        const input2 = document.getElementById("repass")
+        const user_pass = input2.value
+        const user = JSON.parse(localStorage.getItem('user'))
+        await fetch("/api/re_profile", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},  // так как мы шлём json, нужно явно это показать
+            body: JSON.stringify({
+                id : user.id,
+                name: user_name,
+                passw: user_pass,
+            }),
+        })
+
+        //location.reload();
+    }
+
+  /*  async function get_profile() {
+        const response = await fetch("api/get_profile")
+        const users = await response.json()
+        const ul = document.getElementById("users")
+        users.forEach((user) => {
+            const li = document.createElement("li")
+            li.innerHTML =user["to"] + " " + user["fromm"]
+            ul.appendChild(li)
+        })
+    }
+    get_profile()
+*/
+    document.getElementById("change").onclick = re_user
+
+
+    </script>
+</head>
+<body>
+</body>
+</html>
