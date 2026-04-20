@@ -1,8 +1,8 @@
 from typing import List
-
+from src.models_message import Message
 import mariadb
 
-from models import User
+from src.models import User
 
 conn = mariadb.connect(
     host="84.38.180.130",
@@ -55,3 +55,20 @@ def get_user_by_user_password(user: User) -> User:
         return User(id=user[0][0], name=user[0][1], passw=user[0][2])
     else:
         return User(id = -1, name="-1", passw="-1")
+
+ # message
+
+def add_message_db(message: Message) -> Message:
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO messages (message, created_at) VALUES (%s, %s);",
+        (message.message, message.created_at)
+    )
+    conn.commit()
+    new_id = cursor.lastrowid
+    return Message(
+        **{
+            **message.model_dump(),
+            'id': new_id,
+        },
+    )

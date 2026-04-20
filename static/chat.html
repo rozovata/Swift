@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+  <div>
+
+    <input id="message" placeholder="message">
+    <button id="send">send</button>
+
+  </div>
+    <script>
+    async function create_message() {
+        const input1 = document.getElementById("message")
+        const message = input1.value
+
+        await fetch("/api/add_message", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},  // так как мы шлём json, нужно явно это показать
+            body: JSON.stringify({
+                message: message
+            }),
+        })
+
+        //location.reload();
+   }
+
+    document.getElementById("send").onclick = create_message
+
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>

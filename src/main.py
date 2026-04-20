@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from starlette.staticfiles import StaticFiles
-from api import app as router
+from src.api import app as router
 
 app = FastAPI()
 app.include_router(router, prefix="/api")
