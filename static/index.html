@@ -52,6 +52,9 @@
                 name: user.name,
                 passw: user.passw,
             }))
+
+        // Перенаправляем на страницу чата после авторизации
+        window.location.href = "/chat.html"
     }
 
     document.getElementById("reg").onclick = create_user

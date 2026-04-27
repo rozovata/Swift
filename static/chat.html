@@ -2,35 +2,67 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Chat</title>
-  <div>
+    <title>Socket.IO Chat</title>
+   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Общий чат</h1>
+
+    <!-- Список сообщений -->
+    <ul id="messages"></ul>
 
     <input id="message" placeholder="message">
     <button id="send">send</button>
+    <!-- Клиентская библиотека Socket.IO -->
 
-  </div>
     <script>
-    async function create_message() {
-        const input1 = document.getElementById("message")
-        const message = input1.value
+        // Подключаемся к серверу Socket.IO.
+        // Так как фронт и бэк на одном адресе, URL указываем свой.
+        const socket = io("localhost:8000", {transports: ['websocket']});
+        const sendButton = document.getElementById("send");
+        const input = document.getElementById("message")
+        // Функция для получения id текущего пользователя
+         // Функция отправки сообщения.
+        function sendMessage() {
+            const text = input.value.trim();
 
-        await fetch("/api/add_message", {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},  // так как мы шлём json, нужно явно это показать
-            body: JSON.stringify({
-                message: message
-            }),
-        })
+            if (text !== "") {
+                // Отправляем сообщение на сервер.
+                socket.emit("chat message", {
+                    user_id: getCurrentUserId(),
+                    message: text
 
-        //location.reload();
-   }
+                });
 
-    document.getElementById("send").onclick = create_message
+                // Очищаем поле ввода.
+                input.value = "";
+            }
+        }
+
+        // Отправка по кнопке.
+        sendButton.addEventListener("click", sendMessage);
+
+        // Получаем сообщение от сервера.
+        socket.on("chat message", function (msg) {
+            const item = document.createElement("li");
+            item.textContent = msg.message;
+
+            messages.appendChild(item);
+        });
+    function getCurrentUserId() {
+        const userStr = localStorage.getItem('user')
+        if (!userStr) {
+            console.error('Пользователь не авторизован')
+            window.location.href = '/index.html' // Перенаправляем на авторизацию
+            return null
+        }
+
+        const user = JSON.parse(userStr)
+        return user.id
+    }
+
 
 
     </script>
-</head>
-<body>
-
 </body>
 </html>

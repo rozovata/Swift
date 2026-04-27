@@ -61,14 +61,14 @@ def get_user_by_user_password(user: User) -> User:
 def add_message_db(message: Message) -> Message:
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO messages (message, created_at) VALUES (%s, %s);",
-        (message.message, message.created_at)
+        "INSERT INTO messages (user_id, message, created_at) VALUES (%s, %s, %s);",
+        (message.user_id, message.message, message.created_at)
     )
     conn.commit()
     new_id = cursor.lastrowid
     return Message(
-        **{
-            **message.model_dump(),
-            'id': new_id,
-        },
+        id=new_id,
+        user_id=message.user_id,
+        message=message.message,
+        created_at=message.created_at
     )

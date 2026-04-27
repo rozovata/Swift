@@ -1,10 +1,6 @@
-from fastapi import FastAPI
-from starlette.staticfiles import StaticFiles
-from src.api import app as router
 
-app = FastAPI()
-app.include_router(router, prefix="/api")
-app.mount("/", StaticFiles(directory="static"), name="static")
+from src.api import app
+
 
 if __name__ == '__main__':
     import uvicorn
