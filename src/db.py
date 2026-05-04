@@ -72,3 +72,25 @@ def add_message_db(message: Message) -> Message:
         message=message.message,
         created_at=message.created_at
     )
+
+
+def get_all_messages():
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT id, user_id, message, created_at 
+        FROM messages 
+        ORDER BY created_at ASC
+    """)
+    rows = cursor.fetchall() # Получаем список кортежей
+
+    # Превращаем список кортежей в список словарей для FastAPI
+    return [
+        {
+            "id": row[0],
+            "user_id": row[1],
+            "message": row[2],
+            # Проверяем дату на None и конвертируем в строку для JSON
+            "created_at": row[3].isoformat() if row[3] else None
+        }
+        for row in rows
+    ]

@@ -9,6 +9,7 @@ from src.db import add_userr, get_user_by_user_password, add_message_db
 from src.models import User
 from src.db import re_userr
 from src.models_message import Message
+from src.db import get_all_messages
 
 # Создаём обычное FastAPI-приложение.
 fastapi_app = FastAPI()
@@ -42,6 +43,11 @@ async def re_profile(user: User):
 async def get_profile(user: User):
     return get_user_by_user_password(user).model_dump()
 
+
+
+@router.get("/get_messages")
+async def get_messages():
+    return get_all_messages()
 
 # Главная страница.
 # При открытии http://localhost:3000 отдаём HTML-файл.
