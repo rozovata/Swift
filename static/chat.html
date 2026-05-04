@@ -36,7 +36,7 @@
         // Показать сообщение
         function showMessage(name, text, isMe) {
             const item = document.createElement("li");
-            item.className = isMe ? "my" : "other";
+            item.className = isMe ? "my-message" : "other-message";
             item.innerHTML = `<strong>${isMe ? 'Я' : name}:</strong> ${text}`;
             messagesList.appendChild(item);
             messagesList.scrollTop = messagesList.scrollHeight;//перелистнуть вниз
@@ -63,17 +63,10 @@
         sendButton.addEventListener("click", sendMessage);
 
         // Получаем сообщение от сервера.
-        /*socket.on("chat message", function (msg) {
-            const item = document.createElement("li");
-            item.textContent = msg.message;
-
-            messages.appendChild(item);
-        });*/
         socket.on("chat message", (msg) => {
-            const myId = getCurrentUserId();
-            user_name = user[1];
-            const isMe = msg.user_id === myId;
-            showMessage(user_name, msg.message, isMe);
+        const myId = getCurrentUserId();
+        const isMe = msg.user_id === myId;
+        showMessage(msg.user_name, msg.message, isMe);
         });
         function getCurrentUserId() {
         const userStr = localStorage.getItem('user')
@@ -86,28 +79,28 @@
         const user = JSON.parse(userStr)
         return user.id
         }
-        sendButton.onclick = sendMessage;
+
         input.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
 
 
         // Функция загрузки всех сообщений
     async function loadMessages() {
-        try{const response = await fetch("/api/get_messages");
+    try {
+        const response = await fetch("/api/get_messages");
         const messages = await response.json();
         console.log(messages);
-        // Очищаем список
+
         messagesList.innerHTML = '';
 
-        // Показываем каждое сообщение
         messages.forEach(msg => {
             const isMe = msg.user_id === user.id;
-            user_name = user[1];
-            showMessage(user_name, msg.message, isMe);
+            // Используем msg.user_name из БД
+            showMessage(msg.user_name, msg.message, isMe);
         });
     } catch (error) {
         console.error("Ошибка загрузки сообщений:", error);
     }
-    }
+}
 
     // Загружаем сообщения при подключении
     socket.on("connect", () => {

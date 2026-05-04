@@ -69,10 +69,13 @@ async def disconnect(sid):
 @sio.on("chat message")
 async def chat_message(sid, msg):
     print("message:", msg)
-    add_message_db(Message(**msg)).model_dump()
+    saved_msg = add_message_db(Message(**msg))
 
-    # Отправляем сообщение всем подключённым клиентам.
-    await sio.emit("chat message", msg)
+    # Превращаем дату в строку (это единственное что нужно добавить!)
+    data = saved_msg.model_dump()
+    data["created_at"] = str(data["created_at"])  # или data["created_at"].isoformat()
+
+    await sio.emit("chat message", data)
 
 fastapi_app.include_router(router, prefix="/api")
 fastapi_app.mount("/", StaticFiles(directory="static"), name="static")

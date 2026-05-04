@@ -66,9 +66,14 @@ def add_message_db(message: Message) -> Message:
     )
     conn.commit()
     new_id = cursor.lastrowid
+    # Получаем имя пользователя
+    cursor.execute("SELECT name FROM user WHERE id = %s;", (message.user_id,))
+    user_name = cursor.fetchone()
+    user_name = user_name[0] if user_name else "Неизвестный"
     return Message(
         id=new_id,
         user_id=message.user_id,
+        user_name=user_name,
         message=message.message,
         created_at=message.created_at
     )
@@ -77,20 +82,20 @@ def add_message_db(message: Message) -> Message:
 def get_all_messages():
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT id, user_id, message, created_at 
+        SELECT messages.id, messages.user_id, user.name, messages.message, messages.created_at 
         FROM messages 
-        ORDER BY created_at ASC
+        JOIN user ON messages.user_id = user.id 
+        ORDER BY messages.created_at ASC
     """)
-    rows = cursor.fetchall() # Получаем список кортежей
+    rows = cursor.fetchall()
 
-    # Превращаем список кортежей в список словарей для FastAPI
     return [
         {
             "id": row[0],
             "user_id": row[1],
-            "message": row[2],
-            # Проверяем дату на None и конвертируем в строку для JSON
-            "created_at": row[3].isoformat() if row[3] else None
+            "user_name": row[2],  # Имя из таблицы user
+            "message": row[3],
+            "created_at": row[4].isoformat() if row[4] else None
         }
         for row in rows
     ]
